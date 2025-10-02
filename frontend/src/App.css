@@ -1,0 +1,333 @@
+/* ---------------- Body & General ---------------- */
+body {
+  margin: 0;
+  font-family: 'Inter', Arial, sans-serif;
+  background: linear-gradient(135deg, #f4f7f6, #e9eff1);
+  color: #333;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: background 0.4s ease;
+}
+
+/* ---------------- Navbar ---------------- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #2c3e50, #3b4d61);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar h1 {
+  margin: 0;
+  font-size: 1.9em;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ecf0f1, #4aa3f0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dataset-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dataset-toggle button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+.dataset-toggle button:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.dataset-toggle button.active {
+  background: linear-gradient(135deg, #2980b9, #4aa3f0);
+  border: none;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* ---------------- Main Content ---------------- */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* ---------------- Map Section ---------------- */
+.map-section {
+  flex: 2;
+  background: rgba(255,255,255,0.6);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  overflow: hidden;
+  position: relative;
+  min-height: 420px;
+  backdrop-filter: blur(12px);
+  transition: background 0.4s ease;
+}
+
+/* ---------------- Bottom Panel ---------------- */
+.bottom-panel {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  min-height: 320px;
+  flex-wrap: wrap;
+}
+
+/* Panel Styling */
+.filter-section,
+.chart-section {
+  background: rgba(255,255,255,0.75);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  transition: background 0.4s ease;
+}
+
+.filter-section {
+  flex: 1 1 280px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.chart-section {
+  flex: 2 1 600px;
+  position: relative;
+}
+
+/* ---------------- Filter Panel ---------------- */
+.filter-panel h3 {
+  margin-top: 0;
+  color: #34495e;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(0,0,0,0.05);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.filter-group {
+  margin-bottom: 15px;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: #444;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.filter-group select,
+.filter-group input[type="range"] {
+  width: 100%;
+}
+
+.filter-group select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fdfdfd;
+  font-size: 1em;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.filter-group select:focus {
+  border-color: #4aa3f0;
+  box-shadow: 0 0 0 3px rgba(74,163,240,0.3);
+  outline: none;
+}
+
+/* Custom checkboxes */
+.crime-type-checkboxes div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.crime-type-checkboxes input[type="checkbox"] {
+  accent-color: #4aa3f0;
+  transform: scale(1.1);
+}
+
+/* Year slider */
+#year-slider {
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 5px;
+  background: #ddd;
+  outline: none;
+  margin: 8px 0;
+  transition: background 0.3s;
+}
+
+#year-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4aa3f0;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#year-slider::-webkit-slider-thumb:hover {
+  background: #2980b9;
+}
+
+/* ---------------- Charts ---------------- */
+.charts-container h3 {
+  margin-top: 0;
+  color: #34495e;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(0,0,0,0.05);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.recharts-tooltip-wrapper {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* ---------------- Loading Overlay ---------------- */
+.loading-overlay {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+}
+
+.spinner {
+  border: 6px solid rgba(255,255,255,0.3);
+  border-top: 6px solid #4aa3f0;
+}
+
+/* ---------------- Error ---------------- */
+.error-message {
+  background: rgba(255,77,77,0.1);
+  border-left: 6px solid #ff4d4d;
+  color: #a60000;
+  font-weight: 500;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+/* ---------------- Dark Mode ---------------- */
+.dark-mode {
+  background: linear-gradient(135deg, #141422, #1e1e2f);
+  color: #f0f0f0;
+}
+
+.dark-mode .navbar {
+  background: linear-gradient(135deg, #0f0f1a, #1c1c2e);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.dark-mode .dataset-toggle button {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.dark-mode .dataset-toggle button.active {
+  background: linear-gradient(135deg, #4a90e2, #7ab8ff);
+  color: #fff;
+}
+
+.dark-mode .map-section,
+.dark-mode .filter-section,
+.dark-mode .chart-section {
+  background: rgba(42,42,62,0.85);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+}
+
+.dark-mode .filter-group select {
+  background: #2e2e40;
+  border: 1px solid #555;
+  color: #fff;
+}
+
+.dark-mode .charts-container h3,
+.dark-mode .filter-panel h3 {
+  color: #f0f0f0;
+  border-bottom: 1px solid #555;
+}
+
+.dark-mode .loading-overlay {
+  background: rgba(0,0,0,0.6);
+  color: #4a90e2;
+}
+
+.dark-mode .crime-type-checkboxes input[type="checkbox"] {
+  accent-color: #7ab8ff;
+}
+
+/* ---------------- Dark Mode Toggle ---------------- */
+.dark-mode-toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dark-mode-toggle input {
+  display: none;
+}
+
+.dark-mode-toggle .switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  background: #ccc;
+  border-radius: 50px;
+  transition: background 0.3s ease;
+}
+
+.dark-mode-toggle .switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.dark-mode-toggle input:checked + .switch {
+  background: #4cafef;
+}
+
+.dark-mode-toggle input:checked + .switch::after {
+  transform: translateX(24px);
+}

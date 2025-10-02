@@ -1,0 +1,42 @@
+.alerts-recommendations {
+  background: var(--card-bg, #ffffff);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.alerts-recommendations h2 {
+  margin-bottom: 1rem;
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.alert-box {
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.alert-box.high {
+  background-color: #ffe5e5;
+  color: #b30000;
+  border: 1px solid #ff9999;
+}
+
+.alert-box.medium {
+  background-color: #fff4e5;
+  color: #b36b00;
+  border: 1px solid #ffcc99;
+}
+
+.alert-box.low {
+  background-color: #e5ffe5;
+  color: #006600;
+  border: 1px solid #99ff99;
+}
