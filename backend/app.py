@@ -3,10 +3,18 @@ from flask_cors import CORS
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
-
+from pymongo import MongoClient
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017")
+db = client["crime_dashboard"]
+users_collection = db["users"]
+
 
 # -----------------------------
 # Step 1: Load Data
@@ -60,6 +68,59 @@ except Exception as e:
     historical_df = pd.DataFrame()
     predicted_df = pd.DataFrame()
 
+
+# -----------------------------
+# AUTH ROUTES (Register & Login)
+# -----------------------------
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.json
+    username = data.get("username")
+    email = data.get("email")
+    password = data.get("password")
+    confirm_password = data.get("confirm_password")
+    role = data.get("role", "user")  # default role: user
+    department = data.get("department", None)
+    badge_no = data.get("badge_no", None)
+
+    if not username or not email or not password:
+        return jsonify({"error": "All fields are required"}), 400
+    if password != confirm_password:
+        return jsonify({"error": "Passwords do not match"}), 400
+    if users_collection.find_one({"email": email}):
+        return jsonify({"error": "Email already registered"}), 400
+
+    hashed_pw = generate_password_hash(password)
+    user = {
+        "username": username,
+        "email": email,
+        "password": hashed_pw,
+        "role": role,
+        "department": department,
+        "badge_no": badge_no
+    }
+    users_collection.insert_one(user)
+    return jsonify({"message": "User registered successfully!"}), 201
+
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+
+    user = users_collection.find_one({"email": email})
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    if not check_password_hash(user["password"], password):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    return jsonify({
+        "message": "Login successful!",
+        "username": user["username"],
+        "role": user["role"]
+    }), 200
 # -----------------------------
 # Step 2: Helper function for filtering
 # -----------------------------

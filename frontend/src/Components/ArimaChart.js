@@ -3,6 +3,7 @@ import axios from 'axios';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import './ArimaChart.css'; // <-- we'll add loader styling here
 
 // Format numbers in k/M for chart readability
 const formatNumber = (num) => {
@@ -24,14 +25,19 @@ const ArimaChart = ({ selectedState }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const controller = new AbortController(); // ✅ abort controller
     const fetchForecast = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const stateParam = selectedState === 'All' ? '' : selectedState;
         const response = await axios.get(
           `${process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000/api'}/arima-forecast`,
-          { params: { state: stateParam, steps: 5 } }
+          {
+            params: { state: stateParam, steps: 5 },
+            signal: controller.signal, // ✅ link abort controller
+          }
         );
 
         let data = response.data;
@@ -46,9 +52,9 @@ const ArimaChart = ({ selectedState }) => {
           data = Object.keys(aggregated).map(year => ({
             Year: Number(year),
             'Predicted Crimes': aggregated[year]
-          })).sort((a,b) => a.Year - b.Year);
+          })).sort((a, b) => a.Year - b.Year);
         } else {
-          // Single state: map directly
+          // Single state
           data = data.map(item => ({
             Year: item.Year,
             'Predicted Crimes': item.Predicted_Crimes
@@ -58,14 +64,18 @@ const ArimaChart = ({ selectedState }) => {
         // Compute Yearly Change
         const withChange = data.map((item, idx, arr) => {
           if (idx === 0) return { ...item, 'Change': 0 };
-          return { ...item, 'Change': item['Predicted Crimes'] - arr[idx-1]['Predicted Crimes'] };
+          return { ...item, 'Change': item['Predicted Crimes'] - arr[idx - 1]['Predicted Crimes'] };
         });
 
         setForecastData(withChange);
 
       } catch (err) {
-        console.error(err);
-        setError("Failed to fetch ARIMA forecast.");
+        if (axios.isCancel(err)) {
+          console.log("Request cancelled:", err.message);
+        } else {
+          console.error(err);
+          setError("Failed to fetch ARIMA forecast.");
+        }
         setForecastData([]);
       } finally {
         setLoading(false);
@@ -73,10 +83,21 @@ const ArimaChart = ({ selectedState }) => {
     };
 
     fetchForecast();
+
+    return () => {
+      controller.abort(); // ✅ cancel pending requests on unmount
+    };
   }, [selectedState]);
 
-  if (loading) return <p>Loading ARIMA forecast...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) {
+    return (
+      <div className="loader-container">
+        <div className="spinner"></div>
+        <p>Fetching ARIMA forecast...</p>
+      </div>
+    );
+  }
+  if (error) return <p className="error-msg">{error}</p>;
   if (!forecastData.length) return <p>No ARIMA forecast available.</p>;
 
   return (
@@ -89,11 +110,9 @@ const ArimaChart = ({ selectedState }) => {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="Year" />
-          {/* Primary Y-axis for Predicted Crimes */}
           <YAxis yAxisId="left" tickFormatter={formatNumber} />
-          {/* Secondary Y-axis for Change */}
           <YAxis yAxisId="right" orientation="right" tickFormatter={formatNumber} />
-          <Tooltip 
+          <Tooltip
             formatter={(value, name) => {
               if (name === 'Change') return formatChange(value);
               return formatNumber(value);

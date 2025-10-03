@@ -1,0 +1,110 @@
+/* ---------------- Login Container ---------------- */
+.login-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 30px 35px;
+  background: linear-gradient(135deg, #2c3e50, #3b4d61);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  color: #fff;
+  font-family: 'Inter', Arial, sans-serif;
+  transition: all 0.4s ease;
+}
+
+/* Title */
+.login-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  background: linear-gradient(90deg, #4aa3f0, #ecf0f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------------- Form ---------------- */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-form input {
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  backdrop-filter: blur(8px);
+}
+
+.login-form input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+.login-form input:focus {
+  background: rgba(255,255,255,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* ---------------- Button ---------------- */
+.login-form button {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2980b9, #4aa3f0);
+  color: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.login-form button:hover {
+  background: linear-gradient(135deg, #4aa3f0, #2980b9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+
+/* ---------------- Register Redirect ---------------- */
+.register-redirect {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.8);
+}
+
+.register-redirect a {
+  color: #4aa3f0;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.register-redirect a:hover {
+  color: #ecf0f1;
+  text-decoration: underline;
+}
+
+/* ---------------- Dark Mode Enhancements ---------------- */
+.dark-mode .login-container {
+  background: linear-gradient(135deg, #141422, #1e1e2f);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+}
+
+.dark-mode .login-form input {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+.dark-mode .login-form button {
+  background: linear-gradient(135deg, #4a90e2, #7ab8ff);
+}
+
+.dark-mode .register-redirect a {
+  color: #7ab8ff;
+}

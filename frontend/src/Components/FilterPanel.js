@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+
 
 // Define mapping from CSV column names to meaningful labels
 const crimeTypeLabels = {
@@ -35,9 +36,9 @@ const crimeTypeLabels = {
 };
 
 function FilterPanel({
-  states,
-  crimeTypes,
-  years,
+  states = [],
+  crimeTypes = [],
+  years = [],
   selectedState,
   setSelectedState,
   selectedCrimeTypes,
@@ -45,26 +46,29 @@ function FilterPanel({
   selectedYear,
   setSelectedYear,
 }) {
-
-  // Handle multi-select checkbox changes
-  const handleCrimeTypeChange = (event) => {
+  // ---------------- Handlers ----------------
+  const handleCrimeTypeChange = useCallback((event) => {
     const { value, checked } = event.target;
     if (checked) {
       setSelectedCrimeTypes([...selectedCrimeTypes, value]);
     } else {
       setSelectedCrimeTypes(selectedCrimeTypes.filter(ct => ct !== value));
     }
-  };
+  }, [selectedCrimeTypes, setSelectedCrimeTypes]);
 
-  // Handle year slider change
-  const handleYearChange = (event) => {
+  const handleYearChange = useCallback((event) => {
     setSelectedYear(event.target.value);
-  };
+  }, [setSelectedYear]);
 
-  // Determine slider min and max
-  const numericYears = years.filter(y => y !== 'All').map(Number);
-  const minYear = Math.min(...numericYears);
-  const maxYear = Math.max(...numericYears);
+  // ---------------- Slider Range ----------------
+  const numericYears = useMemo(() => years.filter(y => y !== 'All').map(Number), [years]);
+  const minYear = numericYears.length ? Math.min(...numericYears) : 2000;
+  const maxYear = numericYears.length ? Math.max(...numericYears) : 2025;
+
+  // ---------------- Filtered Crime Types ----------------
+  const filteredCrimeTypes = useMemo(() => crimeTypes.filter(ct =>
+    !['All','population','population.1','year','city','state','lat','lng'].includes(ct)
+  ), [crimeTypes]);
 
   return (
     <div className="filter-panel">
@@ -76,39 +80,34 @@ function FilterPanel({
         <select
           id="state-select"
           value={selectedState}
-          onChange={(e) => setSelectedState(e.target.value)}
+          onChange={e => setSelectedState(e.target.value)}
         >
-          {states.map((state) => (
-            <option key={state} value={state}>
-              {state}
-            </option>
+          {states.map(state => (
+            <option key={state} value={state}>{state}</option>
           ))}
         </select>
       </div>
 
       {/* Crime Type Multi-Select */}
-<div className="filter-group">
-  <label>Crime Types:</label>
-  <div className="crime-type-checkboxes" style={{ maxHeight: '150px', overflowY: 'auto' }}>
-    {crimeTypes
-      .filter(ct => ct !== 'All' && ct !== 'population' && ct !== 'population.1' && ct !== 'year' && ct !== 'city' && ct !== 'state' && ct !== 'lat' && ct !== 'lng')
-      .map((type) => (
-        <div key={type}>
-          <input
-            type="checkbox"
-            id={`crime-${type}`}
-            value={type}
-            checked={selectedCrimeTypes.includes(type)}
-            onChange={handleCrimeTypeChange}
-          />
-          <label htmlFor={`crime-${type}`}>
-            {crimeTypeLabels[type] || type}
-          </label>
+      <div className="filter-group">
+        <label>Crime Types:</label>
+        <div className="crime-type-checkboxes" style={{ maxHeight: '150px', overflowY: 'auto' }}>
+          {filteredCrimeTypes.map(type => (
+            <div key={type}>
+              <input
+                type="checkbox"
+                id={`crime-${type}`}
+                value={type}
+                checked={selectedCrimeTypes.includes(type)}
+                onChange={handleCrimeTypeChange}
+              />
+              <label htmlFor={`crime-${type}`}>
+                {crimeTypeLabels[type] || type}
+              </label>
+            </div>
+          ))}
         </div>
-      ))}
-  </div>
-</div>
-
+      </div>
 
       {/* Year Slider */}
       <div className="filter-group">
@@ -131,4 +130,4 @@ function FilterPanel({
   );
 }
 
-export default FilterPanel;
+export default React.memo(FilterPanel);

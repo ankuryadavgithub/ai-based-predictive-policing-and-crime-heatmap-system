@@ -1,0 +1,64 @@
+.arima-chart-container {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 900px;
+  transition: all 0.3s ease;
+}
+
+.arima-chart-container h3 {
+  text-align: center;
+  margin-bottom: 16px;
+  color: #222;
+  font-weight: 600;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+}
+
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #ff7300;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-msg {
+  color: #d9534f;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ---------------- Dark Mode ---------------- */
+.dark-mode .arima-chart-container {
+  background: rgba(42, 42, 62, 0.85);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.dark-mode .arima-chart-container h3 {
+  color: #f0f0f0;
+}
+
+.dark-mode .spinner {
+  border: 6px solid #2e2e40;
+  border-top: 6px solid #7ab8ff; /* matches your dark mode accent */
+}
+
+.dark-mode .error-msg {
+  color: #ff6666;
+}
