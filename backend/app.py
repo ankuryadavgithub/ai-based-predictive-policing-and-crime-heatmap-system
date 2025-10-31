@@ -79,10 +79,16 @@ def register():
     email = data.get("email")
     password = data.get("password")
     confirm_password = data.get("confirm_password")
-    role = data.get("role", "user")  # default role: user
+    role = data.get("role", "user")  
     department = data.get("department", None)
-    badge_no = data.get("badge_no", None)
+    badge_no = data.get("badge_number", None)  # note: rename to match frontend
+    phone_number = data.get("phone_number", None)
+    security_question = data.get("security_question", None)
+    security_answer = data.get("security_answer", None)
+    date_of_birth = data.get("date_of_birth", None)
+    address = data.get("address", None)
 
+    # validation
     if not username or not email or not password:
         return jsonify({"error": "All fields are required"}), 400
     if password != confirm_password:
@@ -97,11 +103,15 @@ def register():
         "password": hashed_pw,
         "role": role,
         "department": department,
-        "badge_no": badge_no
+        "badge_no": badge_no,
+        "phone_number": phone_number,
+        "security_question": security_question,
+        "security_answer": security_answer,
+        "date_of_birth": date_of_birth,
+        "address": address
     }
     users_collection.insert_one(user)
     return jsonify({"message": "User registered successfully!"}), 201
-
 
 @app.route('/api/login', methods=['POST'])
 def login():

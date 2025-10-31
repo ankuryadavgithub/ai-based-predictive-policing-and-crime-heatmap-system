@@ -1,119 +1,211 @@
-/* ---------------- Register Container ---------------- */
-.register-container {
-  max-width: 450px;
-  margin: 60px auto;
-  padding: 30px 35px;
-  background: linear-gradient(135deg, #2c3e50, #3b4d61);
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-  color: #fff;
-  font-family: 'Inter', Arial, sans-serif;
-  transition: all 0.4s ease;
+/* ---------------- Reset & Base ---------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* Title */
-.register-container h2 {
+.reg-body {
+  font-family: "Inter", sans-serif;
+  background: #0d0f18;
+  color: #e0e6f0;
+}
+
+/* ---------------- Wrapper ---------------- */
+.reg-wrapper {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: radial-gradient(circle at 50% 50%, #1a1d2e 0%, #0d0f18 100%);
+}
+
+/* ---------------- Glass Container ---------------- */
+.reg-glass {
+  width: 100%;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(22, 25, 40, 0.65);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------- Hero Section ---------------- */
+.reg-hero {
+  position: relative;
+  height: 100%;
+  min-height: 600px;
+}
+
+.reg-brand {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
+}
+
+.reg-brand h1 {
   font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 25px;
-  background: linear-gradient(90deg, #4aa3f0, #ecf0f1);
+  margin-top: 1rem;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #00f0ff, #0077ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* ---------------- Form ---------------- */
-.register-form {
+.reg-brand p {
+  margin-top: 0.5rem;
+  opacity: 0.7;
+}
+
+/* ---------------- Form Container ---------------- */
+.reg-form-container {
+  padding: 3rem 2.5rem;
+  overflow-y: auto;
+  max-height: 90vh;
+  text-align: left; /* LEFT ALIGN FORM CONTENT */
+}
+
+.reg-form h2 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+  background: linear-gradient(90deg, #00f0ff, #0077ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: left; /* title aligns left */
+}
+
+/* ---------------- Input Groups ---------------- */
+.input-group {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
 }
 
-.register-form input,
-.register-form select {
-  padding: 12px 15px;
-  border-radius: 10px;
-  border: none;
+.input-group label {
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  opacity: 0.75;
+  text-align: left;
+  display: block;
+}
+
+.input-group input,
+.input-group select {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e0e6f0;
+  font-size: 0.95rem;
+  transition: border 0.3s;
+  text-align: left; /* placeholder and input text start left */
+}
+
+.input-group input:focus,
+.input-group select:focus {
   outline: none;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  backdrop-filter: blur(8px);
+  border-color: #00f0ff;
 }
 
-.register-form input::placeholder,
-.register-form select {
-  color: rgba(255,255,255,0.7);
+/* ---------------- Password Field ---------------- */
+.pwd-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.register-form input:focus,
-.register-form select:focus {
-  background: rgba(255,255,255,0.2);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-/* ---------------- Police Fields ---------------- */
-.police-fields input {
-  margin-top: 10px;
-}
-
-/* ---------------- Button ---------------- */
-.register-form button {
-  padding: 12px;
-  border-radius: 12px;
+.eye-btn {
+  background: none;
   border: none;
-  font-size: 1rem;
-  font-weight: 600;
+  color: #00f0ff;
   cursor: pointer;
-  background: linear-gradient(135deg, #2980b9, #4aa3f0);
-  color: #fff;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  font-size: 1.2rem;
 }
 
-.register-form button:hover {
-  background: linear-gradient(135deg, #4aa3f0, #2980b9);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+/* ---------------- Police Extra ---------------- */
+.police-extra {
+  padding: 1rem;
+  border: 1px dashed rgba(0, 240, 255, 0.3);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* ---------------- Form Error ---------------- */
+.form-error {
+  color: #ff4d4d;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* ---------------- Submit Button ---------------- */
+.submit-btn {
+  padding: 0.85rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #00f0ff, #0077ff);
+  color: #0d0f18;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  align-self: flex-start; /* left-align button */
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: scale(1.02);
 }
 
 /* ---------------- Login Redirect ---------------- */
 .login-redirect {
   text-align: center;
-  margin-top: 15px;
-  font-size: 0.95rem;
-  color: rgba(255,255,255,0.8);
+  margin-top: 1.2rem;
+  font-size: 0.9rem;
+  opacity: 0.7;
 }
 
 .login-redirect a {
-  color: #4aa3f0;
-  font-weight: 600;
+  color: #00f0ff;
   text-decoration: none;
-  transition: all 0.3s ease;
 }
 
 .login-redirect a:hover {
-  color: #ecf0f1;
   text-decoration: underline;
 }
 
-/* ---------------- Dark / Light Mode Enhancements ---------------- */
-.dark-mode .register-container {
-  background: linear-gradient(135deg, #141422, #1e1e2f);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-}
-
-.dark-mode .register-form input,
-.dark-mode .register-form select {
-  background: rgba(255,255,255,0.05);
-  color: #fff;
-}
-
-.dark-mode .register-form button {
-  background: linear-gradient(135deg, #4a90e2, #7ab8ff);
-}
-
-.dark-mode .login-redirect a {
-  color: #7ab8ff;
+/* ---------------- Responsive ---------------- */
+@media (max-width: 900px) {
+  .reg-glass {
+    grid-template-columns: 1fr;
+  }
+  .reg-hero {
+    height: 220px;
+  }
+  .reg-brand h1 {
+    font-size: 1.5rem;
+  }
 }

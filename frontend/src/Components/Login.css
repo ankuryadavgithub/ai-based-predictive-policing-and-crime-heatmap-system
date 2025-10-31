@@ -1,8 +1,16 @@
+body.log-body {
+  font-family: "Inter", sans-serif;
+  background: #0d0f18;
+  color: #e0e6f0;
+  min-height: 100vh;
+}
+
+
 /* ---------------- Login Container ---------------- */
 .login-container {
-  max-width: 400px;
-  margin: 60px auto;
-  padding: 30px 35px;
+  max-width: 420px;
+  margin: 70px auto;
+  padding: 35px;
   background: linear-gradient(135deg, #2c3e50, #3b4d61);
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.3);
@@ -14,9 +22,13 @@
 /* Title */
 .login-container h2 {
   text-align: center;
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: linear-gradient(90deg, #4aa3f0, #ecf0f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -26,11 +38,19 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 18px;
 }
 
-.login-form input {
-  padding: 12px 15px;
+/* Input Group with Icons */
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
   border-radius: 10px;
   border: none;
   outline: none;
@@ -41,13 +61,43 @@
   backdrop-filter: blur(8px);
 }
 
-.login-form input::placeholder {
+.input-group input::placeholder {
   color: rgba(255,255,255,0.7);
 }
 
-.login-form input:focus {
+.input-group input:focus {
   background: rgba(255,255,255,0.2);
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Icons */
+.input-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.7);
+}
+
+/* Password Toggle */
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+  color: #fff;
+}
+
+/* Error Message */
+.form-error {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
 }
 
 /* ---------------- Button ---------------- */
@@ -73,9 +123,9 @@
 /* ---------------- Register Redirect ---------------- */
 .register-redirect {
   text-align: center;
-  margin-top: 15px;
+  margin-top: 18px;
   font-size: 0.95rem;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.85);
 }
 
 .register-redirect a {
@@ -96,9 +146,14 @@
   box-shadow: 0 8px 30px rgba(0,0,0,0.6);
 }
 
-.dark-mode .login-form input {
+.dark-mode .input-group input {
   background: rgba(255,255,255,0.05);
   color: #fff;
+}
+
+.dark-mode .input-icon,
+.dark-mode .password-toggle {
+  color: rgba(255,255,255,0.6);
 }
 
 .dark-mode .login-form button {

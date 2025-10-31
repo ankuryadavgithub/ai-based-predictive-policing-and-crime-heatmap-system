@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
 import FilterPanel from "./FilterPanel";
@@ -25,13 +25,10 @@ function Dashboard() {
   const [selectedYear, setSelectedYear] = useState("All");
   const [forecastSteps, setForecastSteps] = useState(3);
 
-  // Loading & Error States
-  const [loadingMap, setLoadingMap] = useState(false);
-  const [loadingCharts, setLoadingCharts] = useState(false);
-  const [errorMap, setErrorMap] = useState(null);
-  const [errorCharts, setErrorCharts] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // -------------------- Helpers --------------------
+  // Grouping helper
   const groupDataByCrimeType = (data) => {
     const grouped = {};
     data.forEach((item) => {
@@ -42,7 +39,7 @@ function Dashboard() {
     return { grouped, allCrimeTypes: Object.keys(grouped).sort() };
   };
 
-  // -------------------- Fetch Filter Options --------------------
+  // Fetch filter options
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
@@ -54,20 +51,18 @@ function Dashboard() {
         setStates(statesRes.data);
         setCrimeTypes(crimeTypesRes.data);
         setYears(yearsRes.data);
-      } catch {
-        setErrorMap("Failed to load filter options.");
+      } catch (err) {
+        setError("Failed to load filter options.");
       }
     };
     fetchFilterOptions();
   }, []);
 
-  // -------------------- Fetch Crime Data --------------------
+  // Fetch crime/map data
   useEffect(() => {
     const fetchData = async () => {
-      setLoadingMap(true);
-      setLoadingCharts(true);
-      setErrorMap(null);
-      setErrorCharts(null);
+      setLoading(true);
+      setError(null);
 
       try {
         let fetchedMapData = [];
@@ -86,10 +81,7 @@ function Dashboard() {
             }),
           ]);
 
-          fetchedMapData = [
-            ...historicalRes.data.mapData,
-            ...predictedRes.data.mapData,
-          ];
+          fetchedMapData = [...historicalRes.data.mapData, ...predictedRes.data.mapData];
 
           const historicalChartMap = new Map(
             historicalRes.data.chartData.map((item) => [item.Year, item["Crime Count"]])
@@ -127,37 +119,18 @@ function Dashboard() {
         setChartData(fetchedChartData);
         const { grouped } = groupDataByCrimeType(fetchedMapData);
         setGroupedMapData(grouped);
-
       } catch (err) {
-        console.error(err);
-        setErrorMap("Failed to load crime data.");
-        setErrorCharts("Failed to load chart data.");
+        setError("Failed to load crime data. Please try again.");
         setRawMapData([]);
         setGroupedMapData({});
         setChartData([]);
       } finally {
-        setLoadingMap(false);
-        setLoadingCharts(false);
+        setLoading(false);
       }
     };
-
     fetchData();
   }, [selectedDataset, selectedState, selectedCrimeTypes, selectedYear]);
 
-  // -------------------- Memoized Components --------------------
-  const MemoizedMap = useMemo(() => <MapComponent groupedMapData={groupedMapData} />, [groupedMapData]);
-  const MemoizedCharts = useMemo(() => (
-    <Charts
-      chartData={chartData}
-      selectedCrimeTypes={
-        selectedCrimeTypes.includes("All")
-          ? Object.keys(groupedMapData)
-          : selectedCrimeTypes
-      }
-    />
-  ), [chartData, groupedMapData, selectedCrimeTypes]);
-
-  // -------------------- Render --------------------
   return (
     <div className={`dashboard-container ${darkMode ? "dark-mode" : ""}`}>
       <Navbar
@@ -169,9 +142,9 @@ function Dashboard() {
 
       <div className="main-content">
         <div className="map-section">
-          {loadingMap && <p>Loading Map Data...</p>}
-          {errorMap && <div className="error-message">{errorMap}</div>}
-          {!loadingMap && !errorMap && MemoizedMap}
+          {loading && <p>Loading Map & Chart Data...</p>}
+          {error && <div className="error-message">{error}</div>}
+          <MapComponent groupedMapData={groupedMapData} />
         </div>
 
         <div className="bottom-panel">
@@ -190,10 +163,14 @@ function Dashboard() {
           </div>
 
           <div className="chart-section">
-            {loadingCharts && <p>Loading Charts...</p>}
-            {errorCharts && <div className="error-message">{errorCharts}</div>}
-            {!loadingCharts && !errorCharts && MemoizedCharts}
-
+            <Charts
+              chartData={chartData}
+              selectedCrimeTypes={
+                selectedCrimeTypes.includes("All")
+                  ? Object.keys(groupedMapData)
+                  : selectedCrimeTypes
+              }
+            />
             <div className="arima-chart-section" style={{ marginTop: "30px" }}>
               <ArimaChart selectedState={selectedState} steps={forecastSteps} />
             </div>
