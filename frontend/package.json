@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@deck.gl/aggregation-layers": "^9.2.6",
+    "@deck.gl/geo-layers": "^9.2.6",
+    "@deck.gl/layers": "^9.2.6",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.8",
+    "deck.gl": "^9.2.6",
     "leaflet": "^1.9.4",
     "leaflet.heat": "^0.2.0",
     "react": "^18.2.0",
@@ -14,7 +18,7 @@
     "react-icons": "^5.5.0",
     "react-leaflet": "^4",
     "react-router-dom": "^7.9.3",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "recharts": "^3.1.2"
   },
   "scripts": {

@@ -1,5 +1,3 @@
-// App.js
-import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./Components/Dashboard";
 import HeatmapPage from "./Components/HeatmapPage";

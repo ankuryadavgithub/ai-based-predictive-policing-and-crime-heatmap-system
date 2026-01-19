@@ -56,7 +56,7 @@ try:
     for df in [historical_df, predicted_df]:
         df.dropna(subset=["City", "State", "Latitude", "Longitude", "Year", "Crime Type", "Crime Count"], inplace=True)
 
-    print("✅ Data loaded successfully!")
+    print("Data loaded successfully!")
     print(f"Historical rows: {len(historical_df)}, Predicted rows: {len(predicted_df)}")
 
 except FileNotFoundError as e:

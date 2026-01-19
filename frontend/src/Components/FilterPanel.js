@@ -35,64 +35,98 @@ const crimeTypeLabels = {
   "total_ipc_crimes": "Total IPC Crimes"
 };
 
+/* ---------------- Filter Panel ---------------- */
 function FilterPanel({
-  states = [],
+  states = ["All"],
   crimeTypes = [],
-  years = [],
+  years = ["All"],
   selectedState,
   setSelectedState,
   selectedCrimeTypes,
   setSelectedCrimeTypes,
   selectedYear,
-  setSelectedYear,
+  setSelectedYear
 }) {
-  // ---------------- Handlers ----------------
-  const handleCrimeTypeChange = useCallback((event) => {
-    const { value, checked } = event.target;
-    if (checked) {
-      setSelectedCrimeTypes([...selectedCrimeTypes, value]);
-    } else {
-      setSelectedCrimeTypes(selectedCrimeTypes.filter(ct => ct !== value));
-    }
-  }, [selectedCrimeTypes, setSelectedCrimeTypes]);
+  /* ---------- Crime Type Change ---------- */
+  const handleCrimeTypeChange = useCallback(
+    (event) => {
+      const { value, checked } = event.target;
 
-  const handleYearChange = useCallback((event) => {
-    setSelectedYear(event.target.value);
-  }, [setSelectedYear]);
+      if (checked) {
+        setSelectedCrimeTypes([...selectedCrimeTypes, value]);
+      } else {
+        setSelectedCrimeTypes(
+          selectedCrimeTypes.filter((ct) => ct !== value)
+        );
+      }
+    },
+    [selectedCrimeTypes, setSelectedCrimeTypes]
+  );
 
-  // ---------------- Slider Range ----------------
-  const numericYears = useMemo(() => years.filter(y => y !== 'All').map(Number), [years]);
+  /* ---------- Year Change ---------- */
+  const handleYearChange = useCallback(
+    (event) => {
+      setSelectedYear(event.target.value);
+    },
+    [setSelectedYear]
+  );
+
+  /* ---------- Year Range ---------- */
+  const numericYears = useMemo(
+    () => years.filter((y) => y !== "All").map(Number),
+    [years]
+  );
+
   const minYear = numericYears.length ? Math.min(...numericYears) : 2000;
   const maxYear = numericYears.length ? Math.max(...numericYears) : 2025;
 
-  // ---------------- Filtered Crime Types ----------------
-  const filteredCrimeTypes = useMemo(() => crimeTypes.filter(ct =>
-    !['All','population','population.1','year','city','state','lat','lng'].includes(ct)
-  ), [crimeTypes]);
+  /* ---------- Valid Crime Types ---------- */
+  const filteredCrimeTypes = useMemo(
+    () =>
+      crimeTypes.filter(
+        (ct) =>
+          ![
+            "All",
+            "population",
+            "population.1",
+            "year",
+            "city",
+            "state",
+            "lat",
+            "lng"
+          ].includes(ct)
+      ),
+    [crimeTypes]
+  );
 
   return (
     <div className="filter-panel">
       <h3>Filters</h3>
 
-      {/* State Dropdown */}
+      {/* ---------- State Filter ---------- */}
       <div className="filter-group">
         <label htmlFor="state-select">State:</label>
         <select
           id="state-select"
           value={selectedState}
-          onChange={e => setSelectedState(e.target.value)}
+          onChange={(e) => setSelectedState(e.target.value)}
         >
-          {states.map(state => (
-            <option key={state} value={state}>{state}</option>
+          {states.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
           ))}
         </select>
       </div>
 
-      {/* Crime Type Multi-Select */}
+      {/* ---------- Crime Type Filter ---------- */}
       <div className="filter-group">
         <label>Crime Types:</label>
-        <div className="crime-type-checkboxes" style={{ maxHeight: '150px', overflowY: 'auto' }}>
-          {filteredCrimeTypes.map(type => (
+        <div
+          className="crime-type-checkboxes"
+          style={{ maxHeight: "150px", overflowY: "auto" }}
+        >
+          {filteredCrimeTypes.map((type) => (
             <div key={type}>
               <input
                 type="checkbox"
@@ -109,7 +143,7 @@ function FilterPanel({
         </div>
       </div>
 
-      {/* Year Slider */}
+      {/* ---------- Year Filter ---------- */}
       <div className="filter-group">
         <label htmlFor="year-slider">Year: {selectedYear}</label>
         <input
@@ -118,10 +152,13 @@ function FilterPanel({
           min={minYear}
           max={maxYear}
           step={1}
-          value={selectedYear === 'All' ? minYear : selectedYear}
+          value={selectedYear === "All" ? minYear : selectedYear}
           onChange={handleYearChange}
         />
-        <div className="year-range-labels" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div
+          className="year-range-labels"
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
           <span>{minYear}</span>
           <span>{maxYear}</span>
         </div>

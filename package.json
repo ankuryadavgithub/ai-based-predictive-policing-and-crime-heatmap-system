@@ -1,5 +1,9 @@
 {
   "dependencies": {
+    "@deck.gl/aggregation-layers": "^9.2.6",
+    "@deck.gl/geo-layers": "^9.2.6",
+    "@deck.gl/layers": "^9.2.6",
+    "deck.gl": "^9.2.6",
     "react-select": "^5.10.2"
   }
 }

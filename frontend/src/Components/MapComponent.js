@@ -1,122 +1,119 @@
-import React, { useRef, useEffect, useMemo } from 'react';
-import { MapContainer, TileLayer, useMap, LayersControl } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet.heat';
+import React, { useMemo } from "react";
+import DeckGL from "@deck.gl/react";
+import { HeatmapLayer } from "@deck.gl/aggregation-layers";
+import { GeoJsonLayer } from "@deck.gl/layers";
+import { TileLayer } from "@deck.gl/geo-layers";
+import { BitmapLayer } from "@deck.gl/layers";
 
-// ZoomHandler component
-const ZoomHandler = ({ selectedState, stateBounds }) => {
-  const map = useMap();
-  const bounds = useMemo(() => stateBounds[selectedState], [selectedState, stateBounds]);
-
-  useEffect(() => {
-    if (selectedState && selectedState !== 'All' && bounds) {
-      map.fitBounds(bounds, { padding: [50, 50] });
-    } else {
-      map.setView([22.5937, 78.9629], 5);
-    }
-  }, [selectedState, bounds, map]);
-
-  return null;
+/* ---------------- VIEW ---------------- */
+const INITIAL_VIEW_STATE = {
+  longitude: 78.9629,
+  latitude: 22.5937,
+  zoom: 4.5,
+  pitch: 0,
+  bearing: 0
 };
 
-// DynamicHeatmap component
-const DynamicHeatmap = React.memo(({ data, gradient }) => {
-  const map = useMap();
-  const heatLayerRef = useRef(null);
+/* ---------------- CRIME COLORS ---------------- */
+const CRIME_COLORS = {
+  murder: [220, 38, 38],
+  rape: [168, 85, 247],
+  theft: [14, 165, 233],
+  robbery: [245, 158, 11],
+  total_ipc_crimes: [34, 197, 94],
+  default: [59, 130, 246]
+};
 
-  const heatData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    const maxVal = Math.max(...data.map(p => p['Crime Count'] || 0));
-    return data.map(p => [
-      p.Latitude,
-      p.Longitude,
-      maxVal > 0 ? (p['Crime Count'] || 0) / maxVal : 0
-    ]);
-  }, [data]);
+const normalizeCrimeKey = key =>
+  key.toLowerCase().replace(/[^a-z0-9]+/g, "_");
 
-  useEffect(() => {
-    if (!map || heatData.length === 0) return;
+/* ---------------- MAP COMPONENT ---------------- */
+export default function MapComponent({
+  groupedMapData,
+  selectedCrimeType = "ALL",
+  selectedState = "All",
+  indiaStateGeoJson
+}) {
+  /* ---------- Build Heatmap Data ---------- */
+  const heatmapData = useMemo(() => {
+    let rows = [];
 
-    if (heatLayerRef.current) map.removeLayer(heatLayerRef.current);
+    if (!groupedMapData) return [];
 
-    heatLayerRef.current = L.heatLayer(heatData, {
-      radius: 12,
-      blur: 15,
-      minOpacity: 0.3,
-      maxZoom: 12,
-      gradient: gradient
-    }).addTo(map);
+    if (selectedCrimeType === "ALL") {
+      Object.values(groupedMapData).forEach(arr => rows.push(...arr));
+    } else {
+      rows = groupedMapData[selectedCrimeType] || [];
+    }
 
-    return () => {
-      if (heatLayerRef.current) {
-        map.removeLayer(heatLayerRef.current);
-        heatLayerRef.current = null;
+    return rows.filter(
+      r =>
+        r.lat &&
+        r.lng &&
+        (selectedState === "All" ||
+          r.state?.toLowerCase() === selectedState.toLowerCase())
+    );
+  }, [groupedMapData, selectedCrimeType, selectedState]);
+
+  const crimeKey = normalizeCrimeKey(selectedCrimeType);
+  const color = CRIME_COLORS[crimeKey] || CRIME_COLORS.default;
+
+  /* ---------------- LAYERS ---------------- */
+  const layers = [
+    /* 🗺️ Base Map (Light, Sharp, No API) */
+    new TileLayer({
+      data: "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+      minZoom: 0,
+      maxZoom: 19,
+      tileSize: 256,
+      renderSubLayers: props => {
+        const {
+          bbox: { west, south, east, north }
+        } = props.tile;
+
+        return new BitmapLayer(props, {
+          data: null,
+          image: props.data,
+          bounds: [west, south, east, north]
+        });
       }
-    };
-  }, [map, heatData, gradient]);
+    }),
 
-  return null;
-});
+    /* 🔥 Crime Heatmap */
+    new HeatmapLayer({
+      id: "crime-heatmap",
+      data: heatmapData,
+      getPosition: d => [Number(d.lng), Number(d.lat)],
+      getWeight: d => Number(d["Crime Count"] || d.value || 1),
+      radiusPixels: 45,
+      intensity: 1,
+      threshold: 0.03,
+      colorRange: [
+        [color[0], color[1], color[2], 60],
+        [color[0], color[1], color[2], 120],
+        [color[0], color[1], color[2], 200]
+      ]
+    }),
 
-// Main MapComponent
-const MapComponent = ({ groupedMapData, selectedState }) => {
-  const defaultCenter = [22.5937, 78.9629];
-  const defaultZoom = 5;
-
-  const gradientPresets = useMemo(() => [
-    { 0.2: 'blue', 0.4: 'cyan', 0.6: 'lime', 0.8: 'orange', 1.0: 'red' },
-    { 0.2: 'purple', 0.5: 'pink', 0.8: 'red', 1.0: 'darkred' },
-    { 0.2: 'green', 0.5: 'yellow', 0.8: 'orange', 1.0: 'red' },
-    { 0.2: 'navy', 0.5: 'blue', 0.8: 'aqua', 1.0: 'lime' },
-    { 0.2: 'brown', 0.5: 'orange', 0.8: 'red', 1.0: 'black' }
-  ], []);
-
-  const crimeTypeGradientMap = useMemo(() => {
-    const map = {};
-    Object.keys(groupedMapData).forEach((crimeType, idx) => {
-      map[crimeType] = gradientPresets[idx % gradientPresets.length];
-    });
-    return map;
-  }, [groupedMapData, gradientPresets]);
-
-  // stateBounds can be outside component or memoized
-  const stateBounds = useMemo(() => ({
-    "Andhra Pradesh": [[12.0, 76.0], [19.0, 84.5]],
-    // ... (other states remain unchanged)
-    "Puducherry": [[11.9, 79.7], [12.0, 79.9]]
-  }), []);
-
-  if (!groupedMapData || Object.keys(groupedMapData).length === 0) {
-    return <div style={{ textAlign: 'center', padding: '50px' }}>Loading Map...</div>;
-  }
+    /* 🧱 State Borders (ON TOP) */
+    indiaStateGeoJson &&
+      new GeoJsonLayer({
+        id: "india-states",
+        data: indiaStateGeoJson,
+        stroked: true,
+        filled: false,
+        getLineColor: [0, 0, 0, 220],
+        getLineWidth: 2,
+        lineWidthMinPixels: 2
+      })
+  ];
 
   return (
-    <MapContainer center={defaultCenter} zoom={defaultZoom} className="leaflet-container" style={{ height: '100%', width: '100%' }}>
-      <ZoomHandler selectedState={selectedState} stateBounds={stateBounds} />
-      <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="OpenStreetMap">
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
-        </LayersControl.BaseLayer>
-
-        {Object.keys(groupedMapData).map(crimeType => (
-          <LayersControl.Overlay
-            key={crimeType}
-            name={crimeType}
-            checked={true}
-          >
-            <DynamicHeatmap
-              data={groupedMapData[crimeType]}
-              gradient={crimeTypeGradientMap[crimeType]}
-            />
-          </LayersControl.Overlay>
-        ))}
-      </LayersControl>
-    </MapContainer>
+    <DeckGL
+      initialViewState={INITIAL_VIEW_STATE}
+      controller={true}
+      layers={layers}
+      style={{ width: "100%", height: "100%" }}
+    />
   );
-};
-
-export default React.memo(MapComponent);
+}
