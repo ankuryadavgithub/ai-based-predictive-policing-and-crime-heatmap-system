@@ -16,7 +16,9 @@ function Navbar({ selectedDataset, setSelectedDataset, darkMode, setDarkMode }) 
   }, [navigate]);
 
   const toggleDarkMode = useCallback(() => {
-    setDarkMode(prev => !prev);
+    if (typeof setDarkMode === "function") {
+      setDarkMode(prev => !prev);
+    }
   }, [setDarkMode]);
 
   return (
@@ -26,6 +28,22 @@ function Navbar({ selectedDataset, setSelectedDataset, darkMode, setDarkMode }) 
       </div>
 
       <div className="navbar-right">
+        {role === "user" && (
+        <button 
+          className="dataset-btn report-crime-btn"
+          onClick={() => navigate("/report-crime")}
+        >
+          🚨 Report Crime
+        </button>
+      )}
+      {role === "police" && (
+        <button
+          className="verify-btn"
+          onClick={() => navigate("/police-evidence")}
+        >
+          🛡 Evidence Verification
+        </button>
+      )}      
         {/* Dataset toggle – only for police */}
         {role === 'police' && setSelectedDataset && (
           <div className="dataset-toggle">
@@ -36,12 +54,13 @@ function Navbar({ selectedDataset, setSelectedDataset, darkMode, setDarkMode }) 
                 onClick={() => setSelectedDataset(dataset)}
               >
                 {dataset.charAt(0).toUpperCase() + dataset.slice(1)}
-              </button>
+              </button> 
             ))}
           </div>
         )}
 
         {/* Dark mode toggle */}
+        {typeof setDarkMode === "function" && (
         <div className="dark-mode-toggle" style={{ margin: '0 10px' }}>
           <input
             type="checkbox"
@@ -51,6 +70,7 @@ function Navbar({ selectedDataset, setSelectedDataset, darkMode, setDarkMode }) 
           />
           <label htmlFor="darkModeSwitch" className="switch"></label>
         </div>
+      )}
 
         {/* Logout button */}
         <button className="logout-btn" onClick={handleLogout}>

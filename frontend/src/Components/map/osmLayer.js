@@ -1,25 +1,20 @@
-// frontend/js/map/osmLayer.js
-const { TileLayer, BitmapLayer } = deck;
+import { TileLayer } from "@deck.gl/geo-layers";
+import { BitmapLayer } from "@deck.gl/layers";
 
 export function createOSMLayer() {
   return new TileLayer({
     id: "osm-base",
-
-    // deck.gl manages x/y/z internally
     data: "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
     minZoom: 0,
     maxZoom: 19,
     tileSize: 256,
 
     renderSubLayers: props => {
-      // 🔒 critical guard
       if (!props.tile || !props.data) return null;
 
       const { west, south, east, north } = props.tile.bbox;
 
-      return new BitmapLayer({
-        id: props.id,
+      return new BitmapLayer(props, {
         image: props.data,
         bounds: [west, south, east, north]
       });

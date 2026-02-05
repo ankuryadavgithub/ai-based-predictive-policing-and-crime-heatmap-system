@@ -1,5 +1,4 @@
-// frontend/js/map/borderLayer.js
-const { GeoJsonLayer } = deck;
+import { GeoJsonLayer } from "@deck.gl/layers";
 
 export function createBorderLayer(geojson) {
   return new GeoJsonLayer({
@@ -7,7 +6,7 @@ export function createBorderLayer(geojson) {
     data: geojson,
     stroked: true,
     filled: false,
-    lineWidthMinPixels: 1,
+    lineWidthMinPixels: 1.5,
     getLineColor: [56, 189, 248]
   });
 }

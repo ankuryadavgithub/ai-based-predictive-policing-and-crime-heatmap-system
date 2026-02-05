@@ -1,96 +1,53 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import MapComponent from "./MapComponent";
-import Navbar from "./Navbar";
 import FilterPanel from "./FilterPanel";
+import Navbar from "./Navbar";
 
-// ✅ local GeoJSON (as you mentioned)
-import indiaStateGeoJson from "./india_state_geo.json";
+const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000/api";
 
-const API_URL =
-  process.env.REACT_APP_API_URL || "http://127.0.0.1:5000/api";
-
-const HeatmapPage = () => {
-  /* ---------------- STATE ---------------- */
+const HeatmapPage = ({ darkMode, setDarkMode }) => {
   const [groupedMapData, setGroupedMapData] = useState({});
   const [selectedDataset, setSelectedDataset] = useState("historical");
 
   const [selectedState, setSelectedState] = useState("All");
   const [selectedCrimeTypes, setSelectedCrimeTypes] = useState([]);
-  const [selectedCrimeType, setSelectedCrimeType] = useState("ALL");
-
   const [selectedYear, setSelectedYear] = useState("All");
 
-  const [darkMode, setDarkMode] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  /* ---------------- SYNC MULTI-SELECT → SINGLE CRIME ---------------- */
-  useEffect(() => {
-    if (selectedCrimeTypes.length === 1) {
-      setSelectedCrimeType(selectedCrimeTypes[0]);
-    } else {
-      setSelectedCrimeType("ALL");
-    }
-  }, [selectedCrimeTypes]);
-
-  /* ---------------- FETCH MAP DATA ---------------- */
   useEffect(() => {
     const fetchMapData = async () => {
-      setLoading(true);
-      setError(null);
+      const endpoint =
+        selectedDataset === "predicted" ? "predicted" : "historical";
 
-      try {
-        let endpoint = "historical";
-        if (selectedDataset === "predicted") endpoint = "predicted";
+      const crimeParam =
+        selectedCrimeTypes.length === 0 || selectedCrimeTypes.includes("All")
+          ? "All"
+          : selectedCrimeTypes.join(",");
 
-        const res = await axios.get(`${API_URL}/${endpoint}`);
-        const data = res.data?.mapData || [];
+      const res = await axios.get(`${API_URL}/${endpoint}`, {
+        params: {
+          state: selectedState,
+          crime_type: crimeParam,
+          year: selectedYear
+        }
+      });
 
-        // 🔑 group by crime type
-        const grouped = {};
-        data.forEach(row => {
-          const crimeType = row["Crime Type"] || "Unknown";
-          if (!grouped[crimeType]) grouped[crimeType] = [];
-          grouped[crimeType].push(row);
-        });
+      const grouped = {};
+      res.data.mapData.forEach(row => {
+        const ct = row["Crime Type"];
+        if (!grouped[ct]) grouped[ct] = [];
+        grouped[ct].push(row);
+      });
 
-        setGroupedMapData(grouped);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load map data");
-      } finally {
-        setLoading(false);
-      }
+      setGroupedMapData(grouped);
     };
 
     fetchMapData();
-  }, [selectedDataset]);
+  }, [selectedDataset, selectedState, selectedCrimeTypes, selectedYear]);
 
-  /* ---------------- DERIVED FILTER DATA ---------------- */
-  const states = useMemo(() => {
-    const set = new Set(["All"]);
-    Object.values(groupedMapData)
-      .flat()
-      .forEach(d => {
-        if (d.state) set.add(d.state);
-      });
-    return Array.from(set);
-  }, [groupedMapData]);
-
-  const crimeTypes = useMemo(
-    () => Object.keys(groupedMapData),
-    [groupedMapData]
-  );
-
-  /* ---------------- RENDER ---------------- */
   return (
-    <div
-      className={`heatmap-page ${darkMode ? "dark-mode" : ""}`}
-      style={{ height: "100vh", width: "100%" }}
-    >
-      {/* -------- NAVBAR -------- */}
+    <>
       <Navbar
         selectedDataset={selectedDataset}
         setSelectedDataset={setSelectedDataset}
@@ -98,10 +55,9 @@ const HeatmapPage = () => {
         setDarkMode={setDarkMode}
       />
 
-      {/* -------- FILTER PANEL -------- */}
       <FilterPanel
-        states={states}
-        crimeTypes={crimeTypes}
+        states={["All"]}
+        crimeTypes={Object.keys(groupedMapData)}
         years={["All"]}
         selectedState={selectedState}
         setSelectedState={setSelectedState}
@@ -110,57 +66,15 @@ const HeatmapPage = () => {
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}
       />
-
-      {/* -------- MAP AREA -------- */}
-      <div
-        style={{
-          height: "calc(100vh - 120px)",
-          width: "100%",
-          position: "relative"
-        }}
-      >
-        {loading && (
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(255,255,255,0.7)",
-              zIndex: 10
-            }}
-          >
-            <p>Loading map data…</p>
-          </div>
-        )}
-
-        {error && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              padding: "10px",
-              background: "red",
-              color: "white",
-              zIndex: 10
-            }}
-          >
-            {error}
-          </div>
-        )}
-
-        {/* -------- DECK.GL MAP -------- */}
+      <div style={{ height: "75vh" }}>
         <MapComponent
           groupedMapData={groupedMapData}
-          selectedCrimeType={selectedCrimeType}
+          selectedCrimeTypes={selectedCrimeTypes}
           selectedState={selectedState}
-          indiaStateGeoJson={indiaStateGeoJson}
+          selectedDataset={selectedDataset}
         />
       </div>
-    </div>
+    </>
   );
 };
 

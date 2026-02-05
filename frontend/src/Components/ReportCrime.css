@@ -1,0 +1,367 @@
+/* =========================================
+   CINEMATIC REPORT CRIME EXPERIENCE
+   ========================================= */
+
+/* Page Backdrop */
+body {
+  background:
+    radial-gradient(circle at top, rgba(255,0,0,0.08), transparent 45%),
+    linear-gradient(180deg, #0b0e14, #06080c);
+}
+
+/* ===============================
+   MAIN REPORT TERMINAL
+================================= */
+
+.report-container {
+  position: relative;
+  max-width: 860px;
+  margin: 60px auto;
+  padding: 48px 52px;
+  background:
+    linear-gradient(180deg, rgba(20,20,30,0.95), rgba(8,8,14,0.95));
+  border-radius: 22px;
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.9),
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    inset 0 0 40px rgba(255,0,0,0.06);
+  backdrop-filter: blur(20px);
+  animation: terminalBoot 0.9s ease;
+  overflow: hidden;
+}
+
+/* Red scanning line */
+.report-container::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background: linear-gradient(
+    transparent,
+    rgba(255,0,0,0.08),
+    transparent
+  );
+  animation: scanLine 6s linear infinite;
+  pointer-events: none;
+}
+
+/* ===============================
+   TITLE
+================================= */
+
+.report-container h2 {
+  margin: 0 0 35px;
+  text-align: center;
+  font-size: 2.4rem;
+  letter-spacing: 1.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #ff4d4d;
+  text-shadow:
+    0 0 10px rgba(255,77,77,0.6),
+    0 0 30px rgba(255,0,0,0.4);
+}
+
+/* ===============================
+   FORM STRUCTURE
+================================= */
+
+.report-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* ===============================
+   LABELS (Authority Tone)
+================================= */
+
+.report-container label {
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #dcdcdc;
+}
+
+/* ===============================
+   INPUTS (Serious & Sharp)
+================================= */
+
+.report-container input,
+.report-container textarea,
+.report-container select {
+  background: linear-gradient(180deg, #0e1118, #090b10);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 1rem;
+  color: #ffffff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    inset 0 0 20px rgba(0,0,0,0.8);
+  transition: all 0.25s ease;
+}
+
+.report-container textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+/* Focus = system lock */
+.report-container input:focus,
+.report-container textarea:focus,
+.report-container select:focus {
+  outline: none;
+  border-color: #ff4d4d;
+  box-shadow:
+    0 0 0 2px rgba(255,77,77,0.35),
+    0 0 20px rgba(255,0,0,0.25);
+}
+
+/* ===============================
+   FILE UPLOAD – EVIDENCE DROP ZONE
+================================= */
+
+.report-container input[type="file"] {
+  border: 2px dashed rgba(255,77,77,0.6);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,0,0,0.08),
+      rgba(255,0,0,0.08) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+  padding: 22px;
+  text-align: center;
+  cursor: pointer;
+  color: #ff9f9f;
+  font-weight: 600;
+}
+
+.report-container input[type="file"]::-webkit-file-upload-button {
+  display: none;
+}
+
+/* ===============================
+   LOCATION STATUS
+================================= */
+
+.report-container p {
+  background: linear-gradient(90deg, rgba(0,170,255,0.15), rgba(0,170,255,0.05));
+  border-left: 4px solid #00aaff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  letter-spacing: 0.4px;
+  color: #cfefff;
+  box-shadow: inset 0 0 15px rgba(0,170,255,0.15);
+}
+
+/* ===============================
+   SUBMIT BUTTON – RED ALERT
+================================= */
+
+.report-container button[type="submit"] {
+  margin-top: 20px;
+  padding: 18px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #fff;
+  background:
+    linear-gradient(135deg, #ff2a2a, #b40000);
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow:
+    0 12px 30px rgba(255,0,0,0.6),
+    inset 0 0 20px rgba(255,255,255,0.15);
+  transition: all 0.25s ease;
+}
+
+/* Hover = danger escalation */
+.report-container button[type="submit"]:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 18px 45px rgba(255,0,0,0.85),
+    inset 0 0 25px rgba(255,255,255,0.25);
+}
+
+/* Active = report locked */
+.report-container button[type="submit"]:active {
+  transform: scale(0.96);
+}
+
+/* ===============================
+   POLICE BADGE BACKGROUND
+================================= */
+
+.police-badge-bg {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 520px;
+  height: 520px;
+  pointer-events: none;
+  opacity: 0.08;
+  z-index: 0;
+
+  background:
+    radial-gradient(circle at center, rgba(255,0,0,0.25), transparent 55%),
+    conic-gradient(
+      from 0deg,
+      rgba(255,0,0,0.35),
+      rgba(0,120,255,0.35),
+      rgba(255,0,0,0.35)
+    );
+
+  mask: radial-gradient(circle, black 55%, transparent 56%);
+  filter: blur(0.3px);
+  animation:
+    badgeRotate 28s linear infinite,
+    badgePulse 4.5s ease-in-out infinite;
+}
+
+/* STAR SHAPE INSIDE BADGE */
+.police-badge-bg::before {
+  content: "★";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 210px;
+  color: rgba(255,255,255,0.18);
+  text-shadow:
+    0 0 20px rgba(255,255,255,0.35),
+    0 0 60px rgba(255,0,0,0.35);
+}
+
+/* TEXT RING */
+.police-badge-bg::after {
+  content: "LAW • ENFORCEMENT • VERIFIED • REPORT";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  transform: rotate(-12deg);
+  text-shadow: 0 0 12px rgba(255,255,255,0.3);
+}
+
+/* ===============================
+   ANIMATIONS
+================================= */
+
+@keyframes badgeRotate {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    opacity: 0.06;
+  }
+  50% {
+    opacity: 0.12;
+  }
+}
+
+/* ===============================
+   LAYER FIX (IMPORTANT)
+================================= */
+
+.report-container > *:not(.police-badge-bg) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===============================
+   EVIDENCE LIST + REMOVE BUTTON
+================================ */
+
+.evidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.evidence-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,0,0,0.08);
+  border: 1px solid rgba(255,77,77,0.45);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #ffecec;
+}
+
+.evidence-item span {
+  max-width: 85%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.evidence-item button {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.evidence-item button:hover {
+  transform: scale(1.2);
+}
+
+/* ===============================
+   ANIMATIONS
+================================= */
+
+@keyframes terminalBoot {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes scanLine {
+  from {
+    top: -120%;
+  }
+  to {
+    top: 120%;
+  }
+}
+
+/* ===============================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 768px) {
+  .report-container {
+    margin: 25px;
+    padding: 30px;
+  }
+
+  .report-container h2 {
+    font-size: 1.9rem;
+  }
+}

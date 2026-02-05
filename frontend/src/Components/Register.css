@@ -1,4 +1,7 @@
-/* ---------------- Reset & Base ---------------- */
+/* =========================================
+   RESET & BASE
+========================================= */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,168 +10,251 @@
 
 .reg-body {
   font-family: "Inter", sans-serif;
-  background: #0d0f18;
+  background:
+    radial-gradient(circle at top, rgba(255,0,0,0.12), transparent 45%),
+    linear-gradient(180deg, #0a0d14, #05070b);
   color: #e0e6f0;
 }
 
-/* ---------------- Wrapper ---------------- */
+/* =========================================
+   WRAPPER
+========================================= */
 .reg-wrapper {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 2rem;
-  background: radial-gradient(circle at 50% 50%, #1a1d2e 0%, #0d0f18 100%);
+  padding: 2.5rem;
 }
 
-/* ---------------- Glass Container ---------------- */
+/* =========================================
+   GLASS CONTAINER
+========================================= */
 .reg-glass {
+  position: relative;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1150px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  background: rgba(22, 25, 40, 0.65);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+  grid-template-columns: 1fr 1.2fr;
+  background:
+    linear-gradient(180deg, rgba(20,20,30,0.92), rgba(8,8,14,0.92));
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-  animation: fadeIn 0.8s ease forwards;
+  box-shadow:
+    0 40px 90px rgba(0,0,0,0.85),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+  backdrop-filter: blur(18px);
+  animation: terminalBoot 0.9s ease;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* =========================================
+   POLICE BADGE WATERMARK
+========================================= */
+.reg-glass::before {
+  content: "★";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 420px;
+  opacity: 0.04;
+  color: #fff;
+  text-shadow:
+    0 0 60px rgba(255,0,0,0.5),
+    0 0 120px rgba(0,120,255,0.4);
+  animation: badgePulse 5s ease-in-out infinite;
+  pointer-events: none;
 }
 
-/* ---------------- Hero Section ---------------- */
+/* =========================================
+   HERO SECTION
+========================================= */
 .reg-hero {
   position: relative;
-  height: 100%;
-  min-height: 600px;
+  min-height: 640px;
+  background:
+    linear-gradient(180deg, rgba(255,0,0,0.15), transparent),
+    linear-gradient(180deg, #0e111a, #07090e);
+  border-right: 1px solid rgba(255,255,255,0.08);
 }
 
+.reg-hero::after {
+  content: "LAW • ENFORCEMENT • REGISTRATION";
+  position: absolute;
+  bottom: 24px;
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.25);
+}
+
+/* Brand */
 .reg-brand {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  display: grid;
+  place-items: center;
   text-align: center;
+  padding: 2rem;
 }
 
 .reg-brand h1 {
-  font-size: 2rem;
-  margin-top: 1rem;
-  letter-spacing: 1px;
-  background: linear-gradient(90deg, #00f0ff, #0077ff);
+  font-size: 2.2rem;
+  letter-spacing: 1.4px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ff4d4d, #f1f1f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(255,77,77,0.5);
 }
 
 .reg-brand p {
-  margin-top: 0.5rem;
-  opacity: 0.7;
+  margin-top: 0.7rem;
+  font-size: 0.95rem;
+  opacity: 0.75;
+  max-width: 280px;
 }
 
-/* ---------------- Form Container ---------------- */
+/* =========================================
+   FORM CONTAINER
+========================================= */
 .reg-form-container {
-  padding: 3rem 2.5rem;
+  padding: 3.2rem 3rem;
+  text-align: left;
   overflow-y: auto;
   max-height: 90vh;
-  text-align: left; /* LEFT ALIGN FORM CONTENT */
 }
 
 .reg-form h2 {
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  font-size: 1.8rem;
-  background: linear-gradient(90deg, #00f0ff, #0077ff);
+  margin-bottom: 1.6rem;
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: 0.8px;
+  background: linear-gradient(90deg, #ff4d4d, #f1f1f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-align: left; /* title aligns left */
 }
 
-/* ---------------- Input Groups ---------------- */
+/* =========================================
+   INPUT GROUPS
+========================================= */
 .input-group {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.25rem;
 }
 
 .input-group label {
-  margin-bottom: 0.4rem;
-  font-size: 0.85rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   opacity: 0.75;
-  text-align: left;
-  display: block;
+  
 }
 
 .input-group input,
 .input-group select {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(180deg, #0e1118, #090b10);
+  text-align: left;
+  padding-left: 16px;
   color: #e0e6f0;
   font-size: 0.95rem;
-  transition: border 0.3s;
-  text-align: left; /* placeholder and input text start left */
+  transition: all 0.25s ease;
+  width: 100%;
+  display: block;
+}
+
+.input-group input::placeholder {
+  color: rgba(255,255,255,0.45);
+  text-align: left;
+  opacity: 0.5; 
 }
 
 .input-group input:focus,
 .input-group select:focus {
   outline: none;
-  border-color: #00f0ff;
+  border-color: #ff4d4d;
+  box-shadow: 0 0 0 2px rgba(255,77,77,0.35);
 }
 
-/* ---------------- Password Field ---------------- */
+/* =========================================
+   PASSWORD FIELD
+========================================= */
 .pwd-box {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+}
+
+.pwd-box input {
+flex: 1;
+text-align: left;
+padding-left: 16px;
 }
 
 .eye-btn {
   background: none;
   border: none;
-  color: #00f0ff;
+  color: rgba(255,255,255,0.6);
   cursor: pointer;
   font-size: 1.2rem;
+  transition: color 0.25s ease;
 }
 
-/* ---------------- Police Extra ---------------- */
+.eye-btn:hover {
+  color: #fff;
+}
+
+/* =========================================
+   POLICE EXTRA SECTION
+========================================= */
 .police-extra {
-  padding: 1rem;
-  border: 1px dashed rgba(0, 240, 255, 0.3);
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  padding: 1.1rem;
+  border-radius: 12px;
+  margin-bottom: 1.2rem;
+  background: rgba(255,0,0,0.08);
+  border: 1px dashed rgba(255,77,77,0.45);
 }
 
-/* ---------------- Form Error ---------------- */
+/* =========================================
+   FORM ERROR
+========================================= */
 .form-error {
-  color: #ff4d4d;
+  color: #ff6b6b;
   margin-bottom: 1rem;
   font-size: 0.9rem;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255,0,0,0.4);
 }
 
-/* ---------------- Submit Button ---------------- */
+/* =========================================
+   SUBMIT BUTTON
+========================================= */
 .submit-btn {
-  padding: 0.85rem 1.5rem;
+  padding: 0.9rem 1.8rem;
   border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #00f0ff, #0077ff);
-  color: #0d0f18;
-  font-weight: 700;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff2a2a, #b40000);
+  color: #fff;
+  font-weight: 800;
   font-size: 1rem;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: transform 0.2s;
-  align-self: flex-start; /* left-align button */
+  transition: all 0.25s ease;
+  box-shadow:
+    0 12px 30px rgba(255,0,0,0.6),
+    inset 0 0 20px rgba(255,255,255,0.15);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 18px 45px rgba(255,0,0,0.85),
+    inset 0 0 25px rgba(255,255,255,0.25);
 }
 
 .submit-btn:disabled {
@@ -176,20 +262,19 @@
   cursor: not-allowed;
 }
 
-.submit-btn:hover:not(:disabled) {
-  transform: scale(1.02);
-}
-
-/* ---------------- Login Redirect ---------------- */
+/* =========================================
+   LOGIN REDIRECT
+========================================= */
 .login-redirect {
   text-align: center;
-  margin-top: 1.2rem;
+  margin-top: 1.3rem;
   font-size: 0.9rem;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .login-redirect a {
-  color: #00f0ff;
+  color: #ff8f8f;
+  font-weight: 700;
   text-decoration: none;
 }
 
@@ -197,15 +282,89 @@
   text-decoration: underline;
 }
 
-/* ---------------- Responsive ---------------- */
+/* =========================================
+   ANIMATIONS
+========================================= */
+@keyframes terminalBoot {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    opacity: 0.03;
+  }
+  50% {
+    opacity: 0.08;
+  }
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
 @media (max-width: 900px) {
   .reg-glass {
     grid-template-columns: 1fr;
   }
+
   .reg-hero {
-    height: 220px;
+    min-height: 240px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
+
   .reg-brand h1 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
+}
+
+/* =========================================
+   FINAL ALIGNMENT FIX (DO NOT MOVE)
+========================================= */
+
+/* 1️⃣ Force full-width form rows */
+.reg-form,
+.input-group,
+.pwd-box {
+  width: 100%;
+}
+
+/* 2️⃣ Fix password input width + placeholder */
+.pwd-box {
+  display: flex;
+  align-items: center;
+}
+
+.pwd-box input {
+  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;          /* 🔑 THIS IS THE MAGIC LINE */
+  padding-right: 44px;   /* space for eye icon */
+  text-align: left;
+}
+
+/* 3️⃣ Keep eye icon perfectly aligned */
+.eye-btn {
+  flex-shrink: 0;
+  margin-left: -38px;
+  z-index: 2;
+}
+
+/* 4️⃣ HARD reset label alignment */
+.input-group label {
+  width: 100%;
+  text-align: left;
+  align-self: flex-start;
+}
+
+/* 5️⃣ HARD reset placeholder alignment */
+.input-group input::placeholder {
+  text-align: left;
+  width: 100%;
 }

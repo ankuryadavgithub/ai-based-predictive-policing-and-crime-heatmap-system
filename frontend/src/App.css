@@ -6,7 +6,7 @@ body {
   color: #333;
   transition: background 0.4s ease, color 0.4s ease;
 }
-
+ 
 .dashboard-container {
   display: flex;
   flex-direction: column;
@@ -46,6 +46,76 @@ body {
   gap: 10px;
 }
 
+/* ===============================
+   NAVBAR – EVIDENCE VERIFICATION
+================================ */
+
+.verify-btn {
+  position: relative;
+  padding: 10px 18px;              /* ⬅ smaller */
+  font-size: 0.9rem;               /* ⬅ navbar size */
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+
+  color: #eaffff;
+  background: linear-gradient(135deg, #00eaff, #0066ff);
+
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 16px rgba(0,102,255,0.45),
+    inset 0 0 12px rgba(255,255,255,0.25);
+
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Subtle glow pulse */
+.verify-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0,234,255,0.6),
+    transparent
+  );
+  opacity: 0;
+  animation: verifyPulse 3s infinite;
+  pointer-events: none;
+}
+
+/* Hover = armed */
+.verify-btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 26px rgba(0,102,255,0.65),
+    inset 0 0 18px rgba(255,255,255,0.3);
+}
+
+/* Active = click */
+.verify-btn:active {
+  transform: scale(0.96);
+}
+
+/* Verified state */
+.verify-btn.verified {
+  background: linear-gradient(135deg, #00ff9d, #00c96b);
+  color: #003b1f;
+  box-shadow:
+    0 8px 20px rgba(0,255,157,0.5),
+    inset 0 0 14px rgba(255,255,255,0.35);
+}
+
+@keyframes verifyPulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.5; }
+}
 .dataset-toggle {
   display: flex;
   flex-wrap: wrap;
@@ -250,9 +320,10 @@ body {
 }
 
 /* ---------------- Dark Mode ---------------- */
+
 .dark-mode {
-  background: linear-gradient(135deg, #141422, #1e1e2f);
-  color: #f0f0f0;
+background: linear-gradient(135deg, #141422, #1e1e2f);
+color: #f0f0f0;
 }
 
 .dark-mode .navbar {
@@ -357,6 +428,49 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/*................Report Crime Button...................*/
+.report-crime-btn {
+  background: linear-gradient(135deg, #e74c3c, #ff6b5a);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 6px 16px rgba(231, 76, 60, 0.45);
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle shine animation */
+.report-crime-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
+  transition: all 0.6s ease;
+}
+
+.report-crime-btn:hover::before {
+  left: 120%;
+}
+
+.report-crime-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 22px rgba(231, 76, 60, 0.6);
+}
+
+.report-crime-btn:active {
+  transform: scale(0.97);
+}
+
+
 .dark-mode .logout-btn {
   background: rgba(255, 77, 77, 0.1);
   color: #ff6666;
@@ -368,3 +482,13 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
+/* ---------------- Report Crime Button (Dark Mode) ---------------- */
+.dark-mode .report-crime-btn {
+  background: linear-gradient(135deg, #ff5f52, #ff8578);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(255, 95, 82, 0.6);
+}
+
+.dark-mode .report-crime-btn:hover {
+  box-shadow: 0 8px 26px rgba(255, 95, 82, 0.85);
+}

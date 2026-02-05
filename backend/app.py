@@ -5,16 +5,41 @@ import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from werkzeug.utils import secure_filename
+import os
+from gridfs import GridFS
+from bson import ObjectId
+from datetime import datetime
+from flask import Response
+# -----------------------------
+# Flask App Initialization
+# -----------------------------
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
+
+# -----------------------------
+# File Upload Configuration
+# -----------------------------
+UPLOAD_FOLDER = "uploads"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "mp4", "mov"}
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# Ensure uploads folder exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 from pymongo import MongoClient
 
 client = MongoClient("mongodb://localhost:27017")
 db = client["crime_dashboard"]
+
+crime_reports_collection = db["Report_Crime"]
 users_collection = db["users"]
 
+fs = GridFS(db)
 
 # -----------------------------
 # Step 1: Load Data
@@ -191,21 +216,29 @@ def get_historical_data():
     crime_type = request.args.get('crime_type')
     year = request.args.get('year')
 
-    if historical_df.empty:
-        return jsonify({"error": "Historical data not loaded."}), 500
-
     filtered = filter_data(historical_df, state, crime_type, year)
 
-    # Map data: sum Crime Count by city/coordinates
-    map_data = filtered.groupby(['City', 'Latitude', 'Longitude'], as_index=False)['Crime Count'].sum()
+    # ✅ KEEP REQUIRED FIELDS
+    map_data = (
+        filtered
+        .groupby(
+            ['City', 'State', 'Latitude', 'Longitude', 'Crime Type', 'Year'],
+            as_index=False
+        )['Crime Count']
+        .sum()
+    )
 
-    # Chart data: sum Crime Count by year
-    chart_data = filtered.groupby('Year', as_index=False)['Crime Count'].sum()
+    chart_data = (
+        filtered
+        .groupby('Year', as_index=False)['Crime Count']
+        .sum()
+    )
 
     return jsonify({
         "mapData": map_data.to_dict(orient='records'),
         "chartData": chart_data.to_dict(orient='records')
     })
+
 
 @app.route('/api/predicted')
 def get_predicted_data():
@@ -213,16 +246,22 @@ def get_predicted_data():
     crime_type = request.args.get('crime_type')
     year = request.args.get('year')
 
-    if predicted_df.empty:
-        return jsonify({"error": "Predicted data not loaded."}), 500
-
     filtered = filter_data(predicted_df, state, crime_type, year)
 
-    # Map data: sum Crime Count by city/coordinates
-    map_data = filtered.groupby(['City', 'Latitude', 'Longitude'], as_index=False)['Crime Count'].sum()
+    map_data = (
+        filtered
+        .groupby(
+            ['City', 'State', 'Latitude', 'Longitude', 'Crime Type', 'Year'],
+            as_index=False
+        )['Crime Count']
+        .sum()
+    )
 
-    # Chart data: sum Crime Count by year
-    chart_data = filtered.groupby('Year', as_index=False)['Crime Count'].sum()
+    chart_data = (
+        filtered
+        .groupby('Year', as_index=False)['Crime Count']
+        .sum()
+    )
 
     return jsonify({
         "mapData": map_data.to_dict(orient='records'),
@@ -352,6 +391,105 @@ def alerts():
     ]
     return jsonify(data)
 
+@app.route("/api/report-crime", methods=["POST"])
+def report_crime():
+    try:
+        data = request.form
+
+        # 🔒 Basic validation
+        if not data.get("crime_type") or not data.get("description"):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        if not data.get("latitude") or not data.get("longitude"):
+            return jsonify({"error": "Location missing"}), 400
+
+        # 📁 Save files into GridFS
+        files = request.files.getlist("files")
+        evidence_ids = []
+
+        for file in files:
+            if file and allowed_file(file.filename):
+                file_id = fs.put(
+                    file,
+                    filename=secure_filename(file.filename),
+                    content_type=file.content_type
+                )
+                evidence_ids.append(str(file_id))
+
+        # 📄 Save crime report
+        report = {
+            "crime_type": data.get("crime_type"),
+            "description": data.get("description"),
+            "severity": data.get("severity"),
+            "location": {
+                "latitude": float(data.get("latitude")),
+                "longitude": float(data.get("longitude"))
+            },
+            "reported_by": data.get("username"),
+            "evidence_file_ids": evidence_ids,  # 🔥 LINKS TO GRIDFS
+            "status": "pending",
+            "created_at": datetime.utcnow()
+        }
+
+        crime_reports_collection.insert_one(report)
+
+        return jsonify({"message": "Crime report submitted successfully"}), 201
+
+    except Exception as e:
+        print("REPORT ERROR:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/police/reports", methods=["GET"])
+def get_all_reports():
+    reports = list(crime_reports_collection.find({}, {"evidence_file_ids": 0}))
+    for r in reports:
+        r["_id"] = str(r["_id"])
+    return jsonify(reports)
+
+@app.route("/api/evidence/<file_id>")
+def get_evidence(file_id):
+    try:
+        grid_file = fs.get(ObjectId(file_id))
+        return Response(
+            grid_file.read(),
+            mimetype=grid_file.content_type,
+            headers={
+                "Content-Disposition": f"inline; filename={grid_file.filename}"
+            }
+        )
+    except:
+        return jsonify({"error": "File not found"}), 404
+    
+@app.route("/api/police/verify-report", methods=["POST"])
+def verify_report():
+    data = request.json
+
+    report_id = data.get("report_id")
+    status = data.get("status")          # verified / rejected
+    note = data.get("note")
+    officer = data.get("officer")
+
+    # 🔒 ROLE VALIDATION — ONLY POLICE CAN VERIFY
+    user = users_collection.find_one({"username": officer})
+    if not user or user.get("role") != "police":
+        return jsonify({"error": "Unauthorized access"}), 403
+
+    # 🔒 Status validation
+    if status not in ["verified", "rejected"]:
+        return jsonify({"error": "Invalid status"}), 400
+
+    # ✅ Update report in MongoDB
+    crime_reports_collection.update_one(
+        {"_id": ObjectId(report_id)},
+        {"$set": {
+            "status": status,
+            "verified_by": officer,
+            "verification_note": note,
+            "verified_at": datetime.utcnow()
+        }}
+    )
+
+    return jsonify({"message": "Report updated successfully"}), 200
 # -----------------------------
 # Step 4: Run Flask app
 # -----------------------------

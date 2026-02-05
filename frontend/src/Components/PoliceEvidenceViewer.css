@@ -1,0 +1,224 @@
+/* =========================================
+   POLICE EVIDENCE VERIFICATION – COMMAND LAB
+========================================= */
+
+body {
+  background:
+    radial-gradient(circle at top, rgba(0,170,255,0.12), transparent 40%),
+    linear-gradient(180deg, #070a12, #02040a);
+  color: #e6f1ff;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* =========================================
+   MAIN POLICE PANEL
+========================================= */
+
+.police-panel {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 28px;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* =========================================
+   LEFT – REPORT LIST
+========================================= */
+
+.report-list {
+  background: linear-gradient(180deg, rgba(15,20,35,0.95), rgba(6,10,18,0.95));
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow:
+    0 30px 60px rgba(0,0,0,0.7),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+  overflow-y: auto;
+  max-height: 78vh;
+}
+
+.report-list div {
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  background: rgba(0,170,255,0.06);
+  border: 1px solid rgba(0,170,255,0.25);
+  transition: all 0.25s ease;
+}
+
+.report-list div:hover {
+  background: rgba(0,170,255,0.18);
+  transform: translateX(4px);
+}
+
+.report-list b {
+  display: block;
+  color: #00d4ff;
+  letter-spacing: 0.8px;
+}
+
+.report-list span {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+/* =========================================
+   RIGHT – REPORT DETAIL
+========================================= */
+
+.report-detail {
+  position: relative;
+  padding: 36px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(18,25,40,0.96), rgba(6,10,18,0.96));
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.85),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+  overflow: hidden;
+}
+
+/* Police hologram badge */
+.report-detail::before {
+  content: "🛡";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 380px;
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+/* =========================================
+   REPORT HEADER
+========================================= */
+
+.report-detail h2 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  letter-spacing: 1.4px;
+  color: #00d4ff;
+  text-shadow: 0 0 20px rgba(0,212,255,0.5);
+}
+
+.report-detail p {
+  margin-bottom: 22px;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #d9e9ff;
+}
+
+/* =========================================
+   EVIDENCE SECTION
+========================================= */
+
+.report-detail h4 {
+  margin: 24px 0 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #9bdcff;
+}
+
+/* Evidence grid */
+.report-detail video,
+.report-detail img {
+  border-radius: 14px;
+  border: 1px solid rgba(0,170,255,0.4);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.6),
+    0 0 18px rgba(0,170,255,0.3);
+  transition: transform 0.3s ease;
+}
+
+.report-detail video:hover,
+.report-detail img:hover {
+  transform: scale(1.02);
+}
+
+/* =========================================
+   VERIFICATION NOTE
+========================================= */
+
+.report-detail textarea {
+  width: 100%;
+  min-height: 110px;
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #e6f1ff;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.report-detail textarea:focus {
+  outline: none;
+  border-color: #00d4ff;
+  box-shadow: 0 0 0 2px rgba(0,212,255,0.35);
+}
+
+/* =========================================
+   VERIFY / REJECT BUTTONS
+========================================= */
+
+.report-detail button {
+  margin-top: 22px;
+  margin-right: 14px;
+  padding: 14px 28px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s ease;
+}
+
+/* VERIFY */
+.report-detail button:first-of-type {
+  background: linear-gradient(135deg, #00ff9d, #00c96b);
+  color: #002b17;
+  box-shadow:
+    0 12px 30px rgba(0,255,157,0.6),
+    inset 0 0 18px rgba(255,255,255,0.35);
+}
+
+.report-detail button:first-of-type:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 45px rgba(0,255,157,0.85);
+}
+
+/* REJECT */
+.report-detail button:last-of-type {
+  background: linear-gradient(135deg, #ff4d4d, #b40000);
+  color: #fff;
+  box-shadow:
+    0 12px 30px rgba(255,0,0,0.6),
+    inset 0 0 18px rgba(255,255,255,0.25);
+}
+
+.report-detail button:last-of-type:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 45px rgba(255,0,0,0.85);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .police-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .report-list {
+    max-height: 260px;
+  }
+}

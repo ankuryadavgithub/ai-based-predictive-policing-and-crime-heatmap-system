@@ -10,34 +10,35 @@ import "../App.css";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000/api";
 
-function Dashboard() {
+function Dashboard({ darkMode, setDarkMode }) {
   const [selectedDataset, setSelectedDataset] = useState("historical");
-  const [darkMode, setDarkMode] = useState(false);
 
-  const [rawMapData, setRawMapData] = useState([]);
+  // const [rawMapData, setRawMapData] = useState([]);
   const [groupedMapData, setGroupedMapData] = useState({});
   const [chartData, setChartData] = useState([]);
   const [states, setStates] = useState([]);
   const [crimeTypes, setCrimeTypes] = useState([]);
   const [years, setYears] = useState([]);
   const [selectedState, setSelectedState] = useState("All");
-  const [selectedCrimeTypes, setSelectedCrimeTypes] = useState(["All"]);
+  const [selectedCrimeTypes, setSelectedCrimeTypes] = useState([]);
   const [selectedYear, setSelectedYear] = useState("All");
   const [forecastSteps, setForecastSteps] = useState(3);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [mapReady, setMapReady] = useState(false);
+
 
   // Grouping helper
-  const groupDataByCrimeType = (data) => {
-    const grouped = {};
-    data.forEach((item) => {
-      const type = item["Crime Type"] || "Unknown";
-      if (!grouped[type]) grouped[type] = [];
-      grouped[type].push(item);
-    });
-    return { grouped, allCrimeTypes: Object.keys(grouped).sort() };
-  };
+  // const groupDataByCrimeType = (data) => {
+  //   const grouped = {};
+  //   data.forEach((item) => {
+  //     const type = item["Crime Type"] || "Unknown";
+  //     if (!grouped[type]) grouped[type] = [];
+  //     grouped[type].push(item);
+  //   });
+  //   return { grouped, allCrimeTypes: Object.keys(grouped).sort() };
+  // };
 
   // Fetch filter options
   useEffect(() => {
@@ -65,71 +66,45 @@ function Dashboard() {
       setError(null);
 
       try {
-        let fetchedMapData = [];
-        let fetchedChartData = [];
-        const crimeParam = selectedCrimeTypes.includes("All")
-          ? "All"
-          : selectedCrimeTypes.join(",");
+        const crimeParam =
+          selectedCrimeTypes.length === 0
+            ? "All"
+            : selectedCrimeTypes.join(",");
 
-        if (selectedDataset === "combined") {
-          const [historicalRes, predictedRes] = await Promise.all([
-            axios.get(`${API_URL}/historical`, {
-              params: { state: selectedState, crime_type: crimeParam, year: selectedYear },
-            }),
-            axios.get(`${API_URL}/predicted`, {
-              params: { state: selectedState, crime_type: crimeParam, year: selectedYear },
-            }),
-          ]);
+        const endpoint =
+          selectedDataset === "combined"
+            ? "historical"
+            : selectedDataset;
 
-          fetchedMapData = [...historicalRes.data.mapData, ...predictedRes.data.mapData];
+        const response = await axios.get(`${API_URL}/${endpoint}`, {
+          params: {
+            state: selectedState,
+            crime_type: crimeParam,
+            year: selectedYear,
+          },
+        });
 
-          const historicalChartMap = new Map(
-            historicalRes.data.chartData.map((item) => [item.Year, item["Crime Count"]])
-          );
-          const predictedChartMap = new Map(
-            predictedRes.data.chartData.map((item) => [item.Year, item["Crime Count"]])
-          );
-          const allYears = [...new Set([...historicalChartMap.keys(), ...predictedChartMap.keys()])].sort();
+        const grouped = {};
+        response.data.mapData.forEach((item) => {
+          const type = item["Crime Type"] || "Unknown";
+          if (!grouped[type]) grouped[type] = [];
+          grouped[type].push(item);
+        });
 
-          fetchedChartData = allYears.map((year) => ({
-            Year: year,
-            "Crime Count": (historicalChartMap.get(year) || 0) + (predictedChartMap.get(year) || 0),
-          }));
-        } else {
-          const endpoint =
-            selectedDataset === "historical"
-              ? `${API_URL}/historical`
-              : `${API_URL}/predicted`;
-
-          const response = await axios.get(endpoint, {
-            params: { state: selectedState, crime_type: crimeParam, year: selectedYear },
-          });
-
-          fetchedMapData = response.data.mapData || [];
-          fetchedChartData = response.data.chartData || [];
-        }
-
-        if (!selectedCrimeTypes.includes("All")) {
-          fetchedMapData = fetchedMapData.filter((d) =>
-            selectedCrimeTypes.includes(d["Crime Type"])
-          );
-        }
-
-        setRawMapData(fetchedMapData);
-        setChartData(fetchedChartData);
-        const { grouped } = groupDataByCrimeType(fetchedMapData);
         setGroupedMapData(grouped);
-      } catch (err) {
-        setError("Failed to load crime data. Please try again.");
-        setRawMapData([]);
+        setChartData(response.data.chartData || []);
+      } catch {
+        setError("Failed to load crime data.");
         setGroupedMapData({});
         setChartData([]);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [selectedDataset, selectedState, selectedCrimeTypes, selectedYear]);
+
 
   return (
     <div className={`dashboard-container ${darkMode ? "dark-mode" : ""}`}>
@@ -144,7 +119,8 @@ function Dashboard() {
         <div className="map-section">
           {loading && <p>Loading Map & Chart Data...</p>}
           {error && <div className="error-message">{error}</div>}
-          <MapComponent groupedMapData={groupedMapData} />
+          <MapComponent groupedMapData={groupedMapData} selectedState={selectedState}
+            selectedCrimeTypes={selectedCrimeTypes} onMapReady= {() => setMapReady(True)} />
         </div>
 
         <div className="bottom-panel">
@@ -161,12 +137,12 @@ function Dashboard() {
               setSelectedYear={setSelectedYear}
             />
           </div>
-
+    
           <div className="chart-section">
             <Charts
               chartData={chartData}
               selectedCrimeTypes={
-                selectedCrimeTypes.includes("All")
+                selectedCrimeTypes.length ===0
                   ? Object.keys(groupedMapData)
                   : selectedCrimeTypes
               }

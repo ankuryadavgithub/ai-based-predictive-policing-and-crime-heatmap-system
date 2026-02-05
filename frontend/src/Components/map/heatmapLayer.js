@@ -1,42 +1,45 @@
-// frontend/js/map/heatmapLayer.js
-const { HexagonLayer } = deck;
+import { HexagonLayer } from "@deck.gl/aggregation-layers";
 
-/**
- * Hexagon-based spatial aggregation layer
- * Radius is in METERS (world space)
- */
-export function createHeatmapLayer(data, weightField) {
+export function createHeatmapLayer(data, weightField, mode = "historical") {
+  const isPredicted = mode === "predicted";
+
   return new HexagonLayer({
-    id: "crime-hexagon-layer",
+    id: isPredicted
+      ? "crime-hex-predicted"
+      : "crime-hex-historical",
 
     data,
 
     getPosition: d => [
-      Number(d.longitude),
-      Number(d.latitude)
+      Number(d.Longitude),
+      Number(d.Latitude)
     ],
 
-    getWeight: d => Number(d[weightField]) || 1,
+    getElevationWeight: d => Number(d[weightField]) || 0,
+    elevationAggregation: "SUM",
 
-    // 🔥 REAL-WORLD SPATIAL PARAMETERS
-    radius: 5000,          // 5 km hexagon radius
-    elevationScale: 40,    // height multiplier
-    elevationRange: [0, 3000],
+    radius: 5000,
+    elevationScale: 40,
     extruded: true,
 
-    // 🔥 VISUAL QUALITY
-    opacity: 0.6,
+    opacity: 0.65,
     coverage: 0.9,
+    pickable: true,
 
-    // 🔥 COLOR SCALE (low → high crime)
-    colorRange: [
-      [237, 248, 251],
-      [179, 205, 227],
-      [140, 150, 198],
-      [136, 86, 167],
-      [129, 15, 124]
-    ],
-
-    pickable: true
+    colorRange: isPredicted
+      ? [
+          [220, 252, 231],
+          [187, 247, 208],
+          [134, 239, 172],
+          [74, 222, 128],
+          [22, 163, 74]
+        ]
+      : [
+          [237, 248, 251],
+          [179, 205, 227],
+          [140, 150, 198],
+          [136, 86, 167],
+          [129, 15, 124]
+        ]
   });
 }
